@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<style>
+			body{
+				background:#65cfff;
+				overflow:hidden;
+			}
+			body, #clock{
+				margin:0 0;
+		        padding:0 0;
+			}
+			#clock {
+		        list-style: none;
+		    }
+
+		    #clock img{
+		    	width:100%;
+		    	height:auto;
+		    	display:block;
+		    }
+		    .hands img{
+			  position: absolute;
+			  left: 0;
+			  top: 0;
+			  -ms-transform-origin: 50% 50%; /* IE 9 */
+			    -webkit-transform-origin: 50% 50%; /* Chrome, Safari, Opera */
+			    transform-origin: 50% 50%;
+			}
+			.secondHand img{
+				 z-index: 3;
+			}
+			.minuteHand img{
+				z-index: 2;
+			}
+		
+			.hourHand img{
+				z-index: 1;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<ul id="clock">	
+				<li class="watchFace"><img src="watchFace.png"/></li>
+				<li class="hands secondHand"><img src="second.png"/></li>
+				<li class="hands minuteHand"><img src="minute.png"/></li>
+				<li class="hands hourHand"><img src="hour.png"/></li>
+			</ul>
+		</div>
+	</body>
+	<script>
+	//for ie9 requestanimationframe fallback.
+	(function() {
+	    var lastTime = 0;
+	    var vendors = ['webkit', 'moz'];
+	    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+	        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+	        window.cancelAnimationFrame =
+	          window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+	    }
+
+	    if (!window.requestAnimationFrame)
+	        window.requestAnimationFrame = function(callback, element) {
+	            var currTime = new Date().getTime();
+	            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+	            var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+	              timeToCall);
+	            lastTime = currTime + timeToCall;
+	            return id;
+	        };
+
+	    if (!window.cancelAnimationFrame)
+	        window.cancelAnimationFrame = function(id) {
+	            clearTimeout(id);
+	        };
+	}());
+		var secondOffset = 21;
+		var minuteOffset = -8;
+		var hourOffset = 1.95;
+
+		$(document).ready(function(){
+			/********* the watch *********/
+			var $secondHand = $(".secondHand img");
+			var $minuteHand = $(".minuteHand img");
+			var $hourHand = $(".hourHand img");
+
+			function secondFunc() {
+	            var seconds = new Date().getSeconds();
+			  var milli = (new Date().getMilliseconds()) * .001
+	            var sdegree = (seconds + secondOffset + milli) * 6.12;
+	            var srotate = "rotate(" + sdegree  + "deg)";
+	            if(seconds <= 58)
+	            {
+	            	$secondHand.css({"-moz-transform" : srotate, "-webkit-transform" : srotate, "-ms-transform" : srotate, "transform" : srotate});
+	            }
+	              requestAnimationFrame(secondFunc);
+	            }
+	           	requestAnimationFrame(secondFunc);
+	      
+	            setInterval( function() {
+	            var hours = new Date().getHours();
+	            var mins = new Date().getMinutes();
+			
+	            var hdegree = (hours + hourOffset) * 30 + (mins / 2);
+	            var hrotate = "rotate(" + hdegree + "deg)";
+	            
+	            $hourHand.css({"-moz-transform" : hrotate, "-webkit-transform" : hrotate,"-ms-transform" : hrotate, "transform" : hrotate});
+	                
+	            }, 1000 );
+	      
+	      
+	            function minFunc() {
+			  	var seconds = (new Date().getSeconds() + ((new Date().getMilliseconds()) * .001)) / 60;
+	            var mins = new Date().getMinutes();
+	            var mdegree = (mins + seconds + minuteOffset) * 6;
+	            var mrotate = "rotate(" + mdegree + "deg)";
+	            
+	            $minuteHand.css({"-moz-transform" : mrotate, "-webkit-transform" : mrotate, "-ms-transform" : mrotate, "transform" : mrotate});
+	                requestAnimationFrame(minFunc);
+	            };
+			  	requestAnimationFrame(minFunc);
+		}); 
+	</script>
+</html>
